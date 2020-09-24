@@ -98,7 +98,14 @@ try {
     <?php 
     
     if ($avisoReadme == "1049") {
-        echo "INSERIR INSTRUÇÕES";
+        ?>
+        
+        <h2 style="text-align: center;">Para pelo funcionamento do sistema, seguir as instruções contidas em </h2>
+        <br>
+        <h2 style="text-align: center;">"readme.md", caso nao tenha o arquivo, pode encontrar o mesmo em:</h2>
+        <br>
+        <h2 style="text-align: center;"><a href="https://github.com/pliniodossantos/Meu-Primeiro-Sistema">https://github.com/pliniodossantos/Meu-Primeiro-Sistema</a></h2>
+        <?php
     }else{
     foreach ($registros as $key => $value){ ?>
 

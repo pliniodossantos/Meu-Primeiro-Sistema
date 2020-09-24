@@ -3,7 +3,9 @@ My first system standalone.
 Instructions:
 
 Using: Xampp+Js
+
 DBname: sistema_hotel
+
 CREATE TABLE tb_registros(
 	id int NOT null AUTO_INCREMENT PRIMARY KEY,
     nome varchar(50),
