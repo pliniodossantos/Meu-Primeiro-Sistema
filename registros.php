@@ -100,7 +100,7 @@ try {
     if ($avisoReadme == "1049") {
         ?>
         
-        <h2 style="text-align: center;">Para pelo funcionamento do sistema, seguir as instruções contidas em </h2>
+        <h2 style="text-align: center;">Para pleno funcionamento do sistema, seguir as instruções contidas em </h2>
         <br>
         <h2 style="text-align: center;">"readme.md", caso nao tenha o arquivo, pode encontrar o mesmo em:</h2>
         <br>

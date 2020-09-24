@@ -23,7 +23,7 @@ if ($_POST['nome'] != null and $_POST['cpf'] != null and $_POST['ano'] != null a
 	
 	} catch (PDOException $e) {
 		//echo 'Erro: '.$e->getCode().' Mensagem: '.$e->getMessage();?>
-		<h2 style="text-align: center;">Para pelo funcionamento do sistema, seguir as instruções contidas em </h2>
+		<h2 style="text-align: center;">Para pleno funcionamento do sistema, seguir as instruções contidas em </h2>
         <br>
         <h2 style="text-align: center;">"readme.md", caso nao tenha o arquivo, pode encontrar o mesmo em:</h2>
         <br>
