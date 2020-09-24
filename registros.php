@@ -9,10 +9,15 @@ try {
 
 
     $retorno = $conexao->query($query);
-    $registros = $retorno->fetchAll(PDO::FETCH_ASSOC);
+    try {
+        $registros = $retorno->fetchAll(PDO::FETCH_ASSOC);
+    } catch (Error $er) {
+
+        $avisoReadme = $er->getCode();
+    }
 } catch (PDOException $e) {
- // echo 'Erro: ' . $e->getCode() . ' Mensagem: ' . $e->getMessage();
-  $avisoReadme = $e->getCode();
+    // echo 'Erro: ' . $e->getCode() . ' Mensagem: ' . $e->getMessage();
+    $avisoReadme = $e->getCode();
 }
 
 
@@ -37,7 +42,9 @@ try {
 
     <script src="app.js"></script>
     <style>
-        body { overflow-x: hidden; }
+        body {
+            overflow-x: hidden;
+        }
     </style>
 
 </head>
@@ -95,57 +102,104 @@ try {
             <hr>
         </div>
     </nav>
-    <?php 
-    
+    <?php
+
     if ($avisoReadme == "1049") {
-        ?>
-        
+    ?>
+
         <h2 style="text-align: center;">Para pleno funcionamento do sistema, seguir as instruções contidas em </h2>
         <br>
         <h2 style="text-align: center;">"readme.md", caso nao tenha o arquivo, pode encontrar o mesmo em:</h2>
         <br>
         <h2 style="text-align: center;"><a href="https://github.com/pliniodossantos/Meu-Primeiro-Sistema">https://github.com/pliniodossantos/Meu-Primeiro-Sistema</a></h2>
-        <?php
-    }else{
-    foreach ($registros as $key => $value){ ?>
+    <?php
+    } elseif ($avisoReadme == "0") {
+        try {
+            $conexao = new PDO('mysql:host=localhost;dbname=sistema_hotel', 'root', '');
 
-        <div class="ml-5">
-            <div class="row">
-                <div class="col-md-2"><?php echo $value['nome']; ?></div>
-                <div class="col-md-2"><?php echo $value['cpf']; ?></div>
-                <div class="col-md-1"><?php echo $value['data']; ?></div>
-                <div class="col-md-1"><?php echo $value['apartamento']; ?></div>
-                <div class="col-md-1"><?php echo $value['valor_diaria']; ?></div>
-                <div class="col-md-1"><?php echo $value['qtd_diarias']; ?></div>
-                <div class="col-md-1"><?php echo $value['valor_total']; ?></div>
-                <div class="col-md-1"><?php echo $value['id']; ?></div>
-                <!-- remove edit -->
-                <form action="remove.php" method="post" style="margin-bottom: 0px;">
-                    <div class="col-md-1"><button type="submit" class="btn btn-info btn-sm text-light">
-                            <i class="fas fa-trash-alt"></i>
-                        </button></div>
-                    <select name="id" style="display: none">
-                        <option value="<?php echo $value['id']; ?>"></option>
-                    </select>
-                </form>
-                <!-- btn edit -->
-                <form action="edita.php" method="post" style="margin-bottom: 0px;" class="ml-1">
-                    <div class="col-md-1"><button type="submit" class="btn btn-info btn-sm text-light">
-                            <i class="fas fa-edit"></i>
-                        </button></div>
-                    <select name="id" style="display: none">
-                        <option value="<?php echo $value['id']; ?>"></option>
-                    </select>
-                </form>
+            $query = "CREATE TABLE tb_registros(
+                id int NOT null AUTO_INCREMENT PRIMARY KEY,
+                nome varchar(50),
+                cpf varchar(11),
+                data date,
+                apartamento varchar(7),
+                valor_diaria float (6,2),
+                qtd_diarias int,
+                valor_total float (8,2)
+            );";
+            $retorno = $conexao->query($query);
+            $retornoedit = $retorno->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            echo 'Erro: ' . $e->getCode() . ' Mensagem: ' . $e->getMessage();
+        }
 
+    ?>
+        <script type="text/javascript">
+            $(window).on('load', function() {
+                $('#tabelaNaoCriada').modal('show');
+            });
+        </script>
+        <div class="modal fade" id="tabelaNaoCriada" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-dark" id="exampleModalLongTitle">Criado apenas a database!!! </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-dark font-weight-bold mr-5">Não foi criado uma tabela de registros, apenas o banco de dados, fique tranquilo, acabei de criar para você de forma automática.</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-info" data-dismiss="modal">fechar</button>
+                    </div>
+                </div>
             </div>
         </div>
+        <?php
+
+    } else {
+        foreach ($registros as $key => $value) { ?>
+
+            <div class="ml-5">
+                <div class="row">
+                    <div class="col-md-2"><?php echo $value['nome']; ?></div>
+                    <div class="col-md-2"><?php echo $value['cpf']; ?></div>
+                    <div class="col-md-1"><?php echo $value['data']; ?></div>
+                    <div class="col-md-1"><?php echo $value['apartamento']; ?></div>
+                    <div class="col-md-1"><?php echo $value['valor_diaria']; ?></div>
+                    <div class="col-md-1"><?php echo $value['qtd_diarias']; ?></div>
+                    <div class="col-md-1"><?php echo $value['valor_total']; ?></div>
+                    <div class="col-md-1"><?php echo $value['id']; ?></div>
+                    <!-- remove edit -->
+                    <form action="remove.php" method="post" style="margin-bottom: 0px;">
+                        <div class="col-md-1"><button type="submit" class="btn btn-info btn-sm text-light">
+                                <i class="fas fa-trash-alt"></i>
+                            </button></div>
+                        <select name="id" style="display: none">
+                            <option value="<?php echo $value['id']; ?>"></option>
+                        </select>
+                    </form>
+                    <!-- btn edit -->
+                    <form action="edita.php" method="post" style="margin-bottom: 0px;" class="ml-1">
+                        <div class="col-md-1"><button type="submit" class="btn btn-info btn-sm text-light">
+                                <i class="fas fa-edit"></i>
+                            </button></div>
+                        <select name="id" style="display: none">
+                            <option value="<?php echo $value['id']; ?>"></option>
+                        </select>
+                    </form>
+
+                </div>
+            </div>
 
 
 
-        <hr>
+            <hr>
 
-    <?php } }?>
+    <?php }
+    } ?>
 
 
     <?php if (isset($_GET['retornoedit'])) { ?>
@@ -171,7 +225,7 @@ try {
                     $('#editormodal').modal('show');
                 });
             </script>
-            <?php  $dataArray = explode('-',$value['data']);
+            <?php $dataArray = explode('-', $value['data']);
 
             ?>
             <!-- Large modal -->
@@ -191,7 +245,7 @@ try {
 
                                 <div class="">
                                     <select name="ano" class="form-control">
-                                        <option value="<?php echo$dataArray['0']?>"><?php echo$dataArray['0']?></option>
+                                        <option value="<?php echo $dataArray['0'] ?>"><?php echo $dataArray['0'] ?></option>
                                         <option value="2020">2020</option>
                                         <option value="2021">2021</option>
                                         <option value="2022">2022</option>
@@ -203,7 +257,7 @@ try {
                                 </div>
                                 <div class="">
                                     <select name="mes" class="form-control">
-                                        <option value="<?php echo$dataArray['1'] ?>">Mês - <?php echo$dataArray['1']?></option>
+                                        <option value="<?php echo $dataArray['1'] ?>">Mês - <?php echo $dataArray['1'] ?></option>
                                         <option value="01">Janeiro</option>
                                         <option value="02">Fevereiro</option>
                                         <option value="03">Março</option>
@@ -219,7 +273,7 @@ try {
                                     </select>
                                 </div>
                                 <div class="">
-                                    <input name="dia" type="text" class="form-control" value="<?php echo$dataArray['2'] ?>" placeholder="Dia" onkeypress="onlyNumbers(event)" />
+                                    <input name="dia" type="text" class="form-control" value="<?php echo $dataArray['2'] ?>" placeholder="Dia" onkeypress="onlyNumbers(event)" />
                                 </div>
 
                                 <div class="">
@@ -244,7 +298,7 @@ try {
                                 <div class="">
                                     <input readonly name="total" type="text" class="form-control" placeholder="Valor Total" id="valortotal" value="<?php echo $value['valor_total']; ?>" />
                                 </div>
-                                <input type="text"  style="display: none;" name="id" value="<?php echo $_GET['retornoedit']?>">
+                                <input type="text" style="display: none;" name="id" value="<?php echo $_GET['retornoedit'] ?>">
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">fechar</button>
                                     <button type="submit" class="btn btn-dark">salvar</button>
@@ -261,58 +315,58 @@ try {
     <?php  }
     } ?>
 
-<?php if (isset($_GET['editmsg']) and $_GET['editmsg'] == 'erro') { ?>
-    <script type="text/javascript">
-        $(window).on('load', function() {
-            $('#erroedit').modal('show');
-        });
-    </script>
-<div class="modal fade" id="erroedit" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title text-danger" id="exampleModalLongTitle">Erro!!! </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-      <div class="text-danger font-weight-bold mr-5" style="text-decoration: underline;">Favor preencher todos os campos!</div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">fechar</button>
-      </div>
-    </div>
-  </div>
-</div>
+    <?php if (isset($_GET['editmsg']) and $_GET['editmsg'] == 'erro') { ?>
+        <script type="text/javascript">
+            $(window).on('load', function() {
+                $('#erroedit').modal('show');
+            });
+        </script>
+        <div class="modal fade" id="erroedit" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-danger" id="exampleModalLongTitle">Erro!!! </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-danger font-weight-bold mr-5" style="text-decoration: underline;">Favor preencher todos os campos!</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<?php } ?>
-<?php if (isset($_GET['editmsg']) and $_GET['editmsg'] == 'sucesso') { ?>
-    <script type="text/javascript">
-        $(window).on('load', function() {
-            $('#sucessoedit').modal('show');
-        });
-    </script>
-<div class="modal fade" id="sucessoedit" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title text-success" id="exampleModalLongTitle">Sucesso!!! </h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-      <div class="text-success font-weight-bold mr-5" style="text-decoration: underline;">Modificações Realizadas com sucesso!</div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" data-dismiss="modal">fechar</button>
-      </div>
-    </div>
-  </div>
-</div>
+    <?php } ?>
+    <?php if (isset($_GET['editmsg']) and $_GET['editmsg'] == 'sucesso') { ?>
+        <script type="text/javascript">
+            $(window).on('load', function() {
+                $('#sucessoedit').modal('show');
+            });
+        </script>
+        <div class="modal fade" id="sucessoedit" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-success" id="exampleModalLongTitle">Sucesso!!! </h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-success font-weight-bold mr-5" style="text-decoration: underline;">Modificações Realizadas com sucesso!</div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<?php } ?>
+    <?php } ?>
 
 </body>
 
